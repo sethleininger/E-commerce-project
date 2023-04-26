@@ -7,6 +7,7 @@ router.get('/', async (req, res) => {
   // find all categories
   try {
     const dbCatData = await Category.findAll({
+     // be sure to include its associated Products
       include: [
         {
           model: Product,
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
-  // be sure to include its associated Products
+  
 });
 
 router.get('/:id', async (req, res) => {
@@ -27,8 +28,7 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Products
  try {
   const dbCatData = await Category.findByPk(req.params.id, {
-    include: [{ 
-      model: Category, 
+    include: [{
       model: Product, 
       attributes: ['id', 'product_name', 'price', 'stock', 'category_id'] }],
   });
