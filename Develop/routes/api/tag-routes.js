@@ -52,45 +52,37 @@ router.post('/', async (req, res) => {
 
   // update a tag's name by its `id` value
 // update tag data
-router.put('/tags/:id', (req, res) => {
-  Tag.update(req.body, {
-    where: {
-      id: req.params.id,
-    },
-  })
-    .then((tag) => {
-      // find all associated products from ProductTag
-      return ProductTag.findAll({ where: { tag_id: req.params.id } });
-    })
-    .then((productTags) => {
-      // get list of current product_ids
-      const productIds = productTags.map(({ product_id }) => product_id);
-      // create filtered list of new product_ids
-      const newProductTags = req.body.productIds
-        .filter((product_id) => !productIds.includes(product_id))
-        .map((product_id) => {
-          return {
-            product_id,
-            tag_id: req.params.id,
-          };
-        });
-      // figure out which ones to remove
-      const productTagsToRemove = productTags
-        .filter(({ product_id }) => !req.body.productIds.includes(product_id))
-        .map(({ id }) => id);
+router.put('/:id', async (req, res) => {
+  try {
+    // Update the tag's name by its `id` value
+    const updatedTag = await Tag.update(
+      { tag_name: req.body.tag_name }, // Update the tag_name field
+      { 
+        where: { id: req.params.id } // Specify the tag's id for the update
+      }
+    );
 
-      // run both actions
-      return Promise.all([
-        ProductTag.destroy({ where: { id: productTagsToRemove } }),
-        ProductTag.bulkCreate(newProductTags),
-      ]);
-    })
-    .then((updatedProductTags) => res.json(updatedProductTags))
-    .catch((err) => {
-      console.log(err);
-      res.status(400).json(err);
+    // Check if any rows were affected by the update
+    if (updatedTag[0] === 0) {
+      res.status(404).json({ message: 'No Tag found with that id!' });
+      return;
+    }
+
+    // Retrieve the updated tag from the database
+    const dbTagData = await Tag.findByPk(req.params.id, {
+      include: [{ 
+        model: Product,
+        attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
+      }],
     });
+
+    res.status(200).json(dbTagData);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
 });
+
 
 
 router.delete('/:id', async (req, res) => {

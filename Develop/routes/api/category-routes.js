@@ -53,17 +53,29 @@ router.post('/', async (req, res) => {
  // update a category by its `id` value
 router.put('/:id', async (req, res) => {
   try {
-    const catData = await Category.update(req.body, {
-      where: {
-        id: req.params.id
-      }
-    })
-    res.status(200).json(catData);
+    const { id } = req.params;
+
+    // Update the category data
+    const [affectedRows] = await Category.update(req.body, {
+      where: { id }
+    });
+
+    // Check if any rows were affected by the update
+    if (affectedRows === 0) {
+      res.status(404).json({ message: 'No Category found with that id!' });
+      return;
+    }
+
+    // Retrieve the updated category from the database
+    const updatedCategory = await Category.findByPk(id);
+
+    res.status(200).json(updatedCategory);
   } catch (err) {
-    res.status(400).json(err);
+    console.log(err);
+    res.status(500).json(err);
   }
- 
 });
+
 
 router.delete('/:id', async (req, res) => {
   // delete a category by its `id` value
