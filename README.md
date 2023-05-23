@@ -22,10 +22,8 @@ npm run seed
 
 ## Usage
 
-Provide instructions and examples for use. Include screenshots as needed.
+Below Is screenshot of my routes in insomnia as well as a video of usage
 
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
+![Screenshot 2023-05-22 at 10 33 19 PM](https://github.com/sethleininger/E-commerce-project/assets/122936654/c7345f8b-2195-4b90-9020-71bc2df9f931)
 
-    ```md
-    ![alt text](assets/images/screenshot.png)
-    ```
+[Untitled_ May 22, 2023 10_32 PM.webm](https://github.com/sethleininger/E-commerce-project/assets/122936654/1abc8d5f-9ed5-4151-bbc8-b078ff803ed8)
